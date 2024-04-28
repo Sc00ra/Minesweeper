@@ -97,6 +97,37 @@ def get_input():
     pygame.quit()
 
 
+def minesweeper(board):
+    screen = pygame.display.set_mode((width * 50, height * 50))
+    clock = pygame.time.Clock()
+    rectangle = pygame.image.load("Tiles_png/minesweeper_square.png").convert_alpha()
+    numbers = [pygame.image.load(f"Tiles_png/minesweeper_{i}.png").convert_alpha() for i in range(9)]
+    mine = pygame.image.load("Tiles_png/minesweeper_mine.png").convert_alpha()
+    running = True
+
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+
+        screen.fill(WHITE)       
+        for i in range(height):
+            for j in range(width):
+                cell_rect = pygame.Rect(j * 50, i * 50, 50, 50)
+                if board[i][j].isdigit() and board[i][j] != '0':  
+                    number_index = int(board[i][j])
+                    screen.blit(numbers[number_index], cell_rect)
+                elif board[i][j] == 'X':  
+                    screen.blit(mine, cell_rect)
+                else:  
+                    screen.blit(numbers[0], cell_rect)
+
+        pygame.display.flip()
+        clock.tick(60)
+
+    pygame.quit()
 
 get_input()
+board = count_mines()
+minesweeper(board)
 print(count_mines())
