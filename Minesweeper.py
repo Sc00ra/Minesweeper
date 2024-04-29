@@ -98,33 +98,48 @@ def get_input():
 
 
 def minesweeper(board):
-    screen = pygame.display.set_mode((width * 50, height * 50))
+
+    square_side = 50
+    while height * square_side > 950 and width * square_side >950:
+        square_side-=1  
+
+    screen = pygame.display.set_mode((width * square_side, height * square_side))
     clock = pygame.time.Clock()
+
     rectangle = pygame.image.load("Tiles_png/minesweeper_square.png").convert_alpha()
     numbers = [pygame.image.load(f"Tiles_png/minesweeper_{i}.png").convert_alpha() for i in range(9)]
     mine = pygame.image.load("Tiles_png/minesweeper_mine.png").convert_alpha()
+    
+    rectangle = pygame.transform.scale(rectangle,(square_side,square_side))
+    numbers = [pygame.transform.scale(img, (square_side, square_side)) for img in numbers]
+    mine = pygame.transform.scale(mine,(square_side,square_side))
+    
+    screen = pygame.display.set_mode((width * square_side, height * square_side))
+    clock = pygame.time.Clock()
     running = True
 
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-
-        screen.fill(WHITE)       
+        screen.fill(GRAY)       
         for i in range(height):
             for j in range(width):
-                cell_rect = pygame.Rect(j * 50, i * 50, 50, 50)
+                cell_rect = pygame.Rect(j * square_side, i * square_side, square_side, square_side)
                 if board[i][j].isdigit() and board[i][j] != '0':  
                     number_index = int(board[i][j])
                     screen.blit(numbers[number_index], cell_rect)
+                    screen.blit(rectangle, cell_rect)
                 elif board[i][j] == 'X':  
                     screen.blit(mine, cell_rect)
+                    screen.blit(rectangle, cell_rect)
                 else:  
                     screen.blit(numbers[0], cell_rect)
+                    screen.blit(rectangle, cell_rect)
 
         pygame.display.flip()
         clock.tick(60)
-
+    print(numbers)
     pygame.quit()
 
 get_input()
