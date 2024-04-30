@@ -117,32 +117,41 @@ def minesweeper(board):
     screen = pygame.display.set_mode((width * square_side, height * square_side))
     clock = pygame.time.Clock()
     running = True
-
+    screen.fill(GRAY)
+    rect_list = []       
+    for i in range(height):
+         for j in range(width):
+            number_rect = pygame.Rect(j * square_side, i * square_side, square_side, square_side)
+            not_played_rect = pygame.Rect(j * square_side, i * square_side, square_side, square_side)
+            if board[i][j].isdigit() and board[i][j] != '0':  
+                number_index = int(board[i][j])
+                screen.blit(numbers[number_index], number_rect)
+                screen.blit(rectangle, not_played_rect)
+            elif board[i][j] == 'X':  
+                screen.blit(mine, number_rect)
+                screen.blit(rectangle, not_played_rect)
+            else:  
+                screen.blit(numbers[0], number_rect)
+                screen.blit(rectangle, not_played_rect)
+            rect_list.append(not_played_rect)
+                    
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-        screen.fill(GRAY)       
-        for i in range(height):
-            for j in range(width):
-                cell_rect = pygame.Rect(j * square_side, i * square_side, square_side, square_side)
-                if board[i][j].isdigit() and board[i][j] != '0':  
-                    number_index = int(board[i][j])
-                    screen.blit(numbers[number_index], cell_rect)
-                    screen.blit(rectangle, cell_rect)
-                elif board[i][j] == 'X':  
-                    screen.blit(mine, cell_rect)
-                    screen.blit(rectangle, cell_rect)
-                else:  
-                    screen.blit(numbers[0], cell_rect)
-                    screen.blit(rectangle, cell_rect)
-
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                x,y = pygame.mouse.get_pos()
+                for i, rect in enumerate(rect_list):
+                    if rect.collidepoint(x,y):
+                        screen.fill(WHITE,rect)
+                        pygame.display.update(rect)
+                        break
+        
         pygame.display.flip()
         clock.tick(60)
-    print(numbers)
+
     pygame.quit()
 
 get_input()
 board = count_mines()
 minesweeper(board)
-print(count_mines())
